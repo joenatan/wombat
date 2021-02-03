@@ -54,7 +54,18 @@ module.exports = (content, lang, query) => {
 
     if (query.filter.type === 'value') {
       const value = Array.isArray(query.filter.value) ? query.filter.value : [query.filter.value]
-      items = items.filter(item => value.includes(item[query.filter.prop]))
+      items = Object.keys(items).map(key => {
+        const obj = items[key][query.filter.prop];
+
+        // If prop is an array
+        if(Array.isArray(obj) && obj.map(cat => value.includes(cat))[0]) {
+          return items[key];
+        }
+
+        if(!Array.isArray(obj) && value.includes(obj)) {
+          return items[key];
+        }
+      })
     }
   }
 
